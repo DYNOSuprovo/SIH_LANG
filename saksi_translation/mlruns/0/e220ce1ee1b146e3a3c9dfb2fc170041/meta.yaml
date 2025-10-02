@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/SIH/saksi_translation/mlruns/0/e220ce1ee1b146e3a3c9dfb2fc170041/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: e220ce1ee1b146e3a3c9dfb2fc170041
+run_name: capable-auk-759
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1759401889192
+status: 1
+tags: []
+user_id: dynos

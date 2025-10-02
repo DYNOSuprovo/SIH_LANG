@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/SIH/mlruns/0/9a28524f97684b94bca9662ff58e47e2/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 9a28524f97684b94bca9662ff58e47e2
+run_name: capable-auk-759
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1759401567130
+status: 1
+tags: []
+user_id: dynos

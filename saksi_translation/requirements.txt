@@ -1,0 +1,10 @@
+torch
+transformers
+sentencepiece
+requests
+beautifulsoup4
+datasets
+accelerate
+sacrebleu
+evaluate
+fastapi[all]
