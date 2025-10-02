@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environments
+.venv/
+saksi_env/
+
+# MLflow
+mlruns/
+
+# Logs
+api_log.txt
+
+# Temporary files
+New Text Document.txt
+
+# Data and Models
+data/
+models/
+saksi_translation/models/
