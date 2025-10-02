@@ -1,0 +1,2 @@
+saksi_translation/data/processed/nepali.en filter=lfs diff=lfs merge=lfs -text
+saksi_translation/data/processed/nepali.ne filter=lfs diff=lfs merge=lfs -text
