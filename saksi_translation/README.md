@@ -1,57 +1,122 @@
 # Saksi Translation: Nepali-English Machine Translation
 
-A machine translation project to translate text from Nepali to English using the NLLB (No Language Left Behind) model from Meta AI. The project includes scripts for data collection, text cleaning, model training, evaluation, and a REST API for serving the translation model.
+This project provides a machine translation solution to translate text from Nepali and Sinhala to English. It leverages the power of the NLLB (No Language Left Behind) model from Meta AI, which is fine-tuned on a custom dataset for improved performance. The project includes a complete workflow from data acquisition to model deployment, featuring a REST API for easy integration.
 
 ## Table of Contents
 
+- [Features](#features)
 - [Workflow](#workflow)
 - [Tech Stack](#tech-stack)
+- [Model Details](#model-details)
+- [API Endpoints](#api-endpoints)
 - [Getting Started](#getting-started)
 - [Usage](#usage)
-- [File Descriptions](#file-descriptions)
 - [Project Structure](#project-structure)
+- [Future Improvements](#future-improvements)
+
+## Features
+
+-   **High-Quality Translation:** Utilizes a fine-tuned NLLB model for accurate translations.
+-   **Support for Multiple Languages:** Currently supports Nepali and Sinhala to English translation.
+-   **REST API:** Exposes the translation model through a high-performance FastAPI application.
+-   **Interactive Frontend:** A simple and intuitive web interface for easy translation.
+-   **Batch Translation:** Supports translating multiple texts in a single request.
+-   **Scalable and Reproducible:** Built with a modular structure and uses MLflow for experiment tracking.
 
 ## Workflow
 
-The project follows a standard machine learning workflow for building a translation model:
+The project follows a standard machine learning workflow for building and deploying a translation model:
 
-1.  **Data Acquisition:** The process starts with collecting parallel text data. The `scripts/fetch_parallel_data.py` script is designed to download data from various online sources. This script can be extended to include more data sources to improve the model's performance.
+1.  **Data Acquisition:** The process begins with collecting parallel text data (Nepali/Sinhala and English). The `scripts/fetch_parallel_data.py` script is used to download data from various online sources. The quality and quantity of this data are crucial for the model's performance.
 
-2.  **Data Cleaning and Preprocessing:** Raw data from the web is often noisy. The `scripts/clean_text_data.py` script is used to perform several preprocessing steps, such as:
-    *   Removing HTML tags and other artifacts.
-    *   Normalizing Unicode characters.
-    *   Filtering out sentences that are too long or too short.
-    *   Ensuring a one-to-one correspondence between source and target sentences.
+2.  **Data Cleaning and Preprocessing:** Raw data from the web is often noisy and requires cleaning. The `scripts/clean_text_data.py` script performs several preprocessing steps:
+    *   **HTML Tag Removal:** Strips out HTML tags and other web artifacts.
+    *   **Unicode Normalization:** Normalizes Unicode characters to ensure consistency.
+    *   **Sentence Filtering:** Removes sentences that are too long or too short, which can negatively impact training.
+    *   **Corpus Alignment:** Ensures a one-to-one correspondence between source and target sentences.
 
-3.  **Model Finetuning:** The core of the project is finetuning a pre-trained NLLB (No Language Left Behind) model. The `src/train.py` script handles this process. It uses the Hugging Face `Trainer` class to manage the training loop, including:
-    *   Loading the pre-trained model and tokenizer.
+3.  **Model Finetuning:** The core of the project is fine-tuning a pre-trained NLLB model on our custom parallel dataset. The `src/train.py` script, which leverages the Hugging Face `Trainer` API, handles this process. This script manages the entire training loop, including:
+    *   Loading the pre-trained NLLB model and tokenizer.
     *   Creating a PyTorch Dataset from the preprocessed data.
-    *   Setting up training arguments, such as learning rate, batch size, and number of epochs.
-    *   Running the training loop and saving the finetuned model.
+    *   Configuring training arguments like learning rate, batch size, and number of epochs.
+    *   Executing the training loop and saving the fine-tuned model checkpoints.
 
-4.  **Model Evaluation:** After training, it's crucial to evaluate the model's performance. The `src/evaluate.py` script calculates the BLEU (Bilingual Evaluation Understudy) score, a widely used metric for evaluating machine translation quality. This script compares the model's translations of a test set with reference translations.
+4.  **Model Evaluation:** After training, the model's performance is evaluated using the `src/evaluation.py` script. This script calculates the **BLEU (Bilingual Evaluation Understudy)** score, a widely accepted metric for machine translation quality. It works by comparing the model's translations of a test set with a set of high-quality reference translations.
 
-5.  **Inference and Deployment:** Once the model is trained and evaluated, it can be used for translation. The `test_translation.py` script provides a simple example of how to load the finetuned model and translate a sentence. For a more practical application, the `api.py` script exposes the translation model as a REST API using FastAPI. This allows other applications to easily consume the translation service.
+5.  **Inference and Deployment:** Once the model is trained and evaluated, it's ready for use.
+    *   `interactive_translate.py`: A command-line script for quick, interactive translation tests.
+    *   `fast_api.py`: A production-ready REST API built with FastAPI that serves the translation model. This allows other applications to easily consume the translation service.
 
 ## Tech Stack
 
-The technologies used in this project were chosen to create a robust and efficient machine translation pipeline:
+The technologies used in this project were chosen to create a robust, efficient, and maintainable machine translation pipeline:
 
--   **Python:** As the de facto language for machine learning, Python provides a rich ecosystem of libraries and frameworks.
--   **PyTorch:** Chosen for its flexibility and control over the model training process. Its dynamic computation graph is particularly useful for research and development.
--   **Hugging Face Transformers:** This library is the cornerstone of the project. It provides easy access to a vast number of pre-trained models, including NLLB, and a standardized interface for training and inference. This significantly reduces the amount of boilerplate code needed.
--   **Hugging Face Datasets:** This library simplifies the process of loading and preprocessing large datasets. It provides efficient data loading and manipulation capabilities, which are essential for training deep learning models.
--   **FastAPI:** For serving the model as an API, FastAPI was chosen for its high performance and ease of use. Its automatic generation of interactive API documentation (using Swagger UI) makes it easy to test and share the API.
--   **Uvicorn:** As a high-performance ASGI server, Uvicorn is the recommended server for running FastAPI applications in production.
--   **MLflow:** To ensure reproducibility and keep track of experiments, MLflow is used for logging training parameters, metrics, and model artifacts. This is crucial for managing the complexity of machine learning projects.
+-   **Python:** The primary language for the project, offering a rich ecosystem of libraries and frameworks for machine learning.
+-   **PyTorch:** A flexible and powerful deep learning framework that provides fine-grained control over the model training process.
+-   **Hugging Face Transformers:** The backbone of the project, providing easy access to pre-trained models like NLLB and a standardized interface for training and inference.
+-   **Hugging Face Datasets:** Simplifies the process of loading and preprocessing large datasets, with efficient data loading and manipulation capabilities.
+-   **FastAPI:** A modern, high-performance web framework for building APIs with Python. It's used to serve the translation model as a REST API.
+-   **Uvicorn:** A lightning-fast ASGI server, used to run the FastAPI application.
+-   **MLflow:** Used for experiment tracking to ensure reproducibility. It logs training parameters, metrics, and model artifacts, which is crucial for managing machine learning projects.
+
+## Model Details
+
+-   **Base Model:** The project uses the `facebook/nllb-200-distilled-600M` model, a distilled version of the NLLB-200 model. This model is designed to be efficient while still providing high-quality translations for a large number of languages.
+-   **Fine-tuning:** The base model is fine-tuned on a custom dataset of Nepali-English and Sinhala-English parallel text to improve its performance on these specific language pairs.
+-   **Tokenizer:** The `NllbTokenizer` is used for tokenizing the text. It's a sentence-piece based tokenizer that is specifically designed for the NLLB model.
+
+## API Endpoints
+
+The FastAPI application provides the following endpoints:
+
+-   **`GET /`**: Returns the frontend HTML page.
+-   **`GET /languages`**: Returns a list of supported languages.
+-   **`POST /translate`**: Translates a single text.
+    -   **Request Body:**
+        ```json
+        {
+          "text": "string",
+          "source_language": "string"
+        }
+        ```
+    -   **Response Body:**
+        ```json
+        {
+          "original_text": "string",
+          "translated_text": "string",
+          "source_language": "string"
+        }
+        ```
+-   **`POST /batch-translate`**: Translates a batch of texts.
+    -   **Request Body:**
+        ```json
+        {
+          "texts": [
+            "string"
+          ],
+          "source_language": "string"
+        }
+        ```
+    -   **Response Body:**
+        ```json
+        {
+          "original_texts": [
+            "string"
+          ],
+          "translated_texts": [
+            "string"
+          ],
+          "source_language": "string"
+        }
+        ```
 
 ## Getting Started
 
 ### Prerequisites
 
--   **Python 3.10+:** Ensure you have a recent version of Python installed. You can download it from [python.org](https://www.python.org/).
--   **Git:** Git is required to clone the repository. You can download it from [git-scm.com](https://git-scm.com/).
--   **(Optional) NVIDIA GPU with CUDA:** For training the model, a GPU is highly recommended to speed up the process. Ensure you have the appropriate NVIDIA drivers and CUDA toolkit installed.
+-   **Python 3.10 or higher:** Ensure you have a recent version of Python installed.
+-   **Git and Git LFS:** Git is required to clone the repository, and Git LFS is required to handle large model files.
+-   **(Optional) NVIDIA GPU with CUDA:** A GPU is highly recommended for training the model.
 
 ### Installation
 
@@ -64,15 +129,11 @@ The technologies used in this project were chosen to create a robust and efficie
 2.  **Create and activate a virtual environment:**
     ```bash
     python -m venv .venv
+    # On Windows
+    .venv\Scripts\activate
+    # On macOS/Linux
+    source .venv/bin/activate
     ```
-    -   **Windows:**
-        ```bash
-        .venv\Scripts\activate
-        ```
-    -   **macOS/Linux:**
-        ```bash
-        source .venv/bin/activate
-        ```
 
 3.  **Install dependencies:**
     ```bash
@@ -87,13 +148,11 @@ The technologies used in this project were chosen to create a robust and efficie
     ```bash
     python scripts/fetch_parallel_data.py --output_dir data/raw
     ```
-    This will download the parallel data to the `data/raw` directory.
 
 -   **Clean Text Data:**
     ```bash
     python scripts/clean_text_data.py --input_dir data/raw --output_dir data/processed
     ```
-    This will clean the raw data and save the processed files to the `data/processed` directory.
 
 ### Training
 
@@ -107,7 +166,6 @@ The technologies used in this project were chosen to create a robust and efficie
         --per_device_train_batch_size 8 \
         --num_train_epochs 3
     ```
-    The training script will log experiments to MLflow. You can view the MLflow UI by running `mlflow ui` in a separate terminal.
 
 ### Evaluation
 
@@ -118,72 +176,43 @@ The technologies used in this project were chosen to create a robust and efficie
         --test_data_path "data/test_sets/test.en" \
         --reference_data_path "data/test_sets/test.ne"
     ```
-    This will print the BLEU score of the model on the test set.
 
-### Translation
+### Interactive Translation
 
--   **Translate a Sentence:**
-    Modify the `sample_text_to_translate` variable in `test_translation.py` with the sentence you want to translate. Then run:
+-   **Run the interactive script:**
     ```bash
-    python test_translation.py
+    python interactive_translate.py
     ```
 
 ### API
 
 -   **Run the API:**
     ```bash
-    uvicorn api:app --host 0.0.0.0 --port 8000
+    uvicorn fast_api:app --reload
     ```
-    The `--reload` flag can be added for development to automatically reload the server on code changes.
-
--   **API Documentation:**
-    Once the API is running, you can access the interactive documentation at `http://127.0.0.1:8000/docs`.
-
--   **Example Request:**
-    You can use `curl` or any other API client to send a POST request to the `/translate/` endpoint:
-    ```bash
-    curl -X POST "http://127.0.0.1:8000/translate/" \
-         -H "Content-Type: application/json" \
-         -d '{"text": "नेपाल एक सुन्दर देश हो।"}'
-    ```
-    **Expected Response:**
-    ```json
-    {
-      "translated_text": "Nepal is a beautiful country."
-    }
-    ```
-
-## File Descriptions
-
--   `api.py`: Defines the FastAPI application that serves the translation model.
--   `test_translation.py`: A simple script for testing the translation of a single sentence.
--   `src/train.py`: The main script for finetuning the NLLB model.
--   `src/evaluate.py`: A script for evaluating the performance of the finetuned model.
--   `src/translate.py`: Contains the core translation logic.
--   `scripts/fetch_parallel_data.py`: A script for downloading parallel data from the web.
--   `scripts/clean_text_data.py`: A script for cleaning and preprocessing the raw text data.
--   `requirements.txt`: A list of all the Python dependencies required for the project.
--   `mlruns/`: The directory where MLflow stores experiment tracking data.
--   `models/`: The directory where the finetuned models are saved.
+    Open your browser and navigate to `http://127.0.0.1:8000` to use the web interface.
 
 ## Project Structure
 
 ```
 saksi_translation/
 ├── .gitignore
-├── api.py                  # FastAPI application for serving the model
-├── api_log.txt             # Log file for the API
-├── baseline_translate.py   # Baseline translation script
+├── fast_api.py             # FastAPI application
+├── interactive_translate.py  # Interactive translation script
 ├── README.md               # Project documentation
 ├── requirements.txt        # Python dependencies
 ├── test_translation.py     # Script for testing the translation model
+├── frontend/
+│   ├── index.html          # Frontend HTML
+│   ├── script.js           # Frontend JavaScript
+│   └── styles.css          # Frontend CSS
 ├── data/
 │   ├── processed/          # Processed data for training
 │   ├── raw/                # Raw data downloaded from the web
 │   └── test_sets/          # Test sets for evaluation
 ├── mlruns/                 # MLflow experiment tracking data
 ├── models/
-│   └── nllb-finetuned-nepali-en/ # Finetuned model
+│   └── nllb-finetuned-nepali-en/ # Fine-tuned model
 ├── notebooks/              # Jupyter notebooks for experimentation
 ├── scripts/
 │   ├── clean_text_data.py
@@ -193,7 +222,14 @@ saksi_translation/
 │   └── scrape_bbc_nepali.py
 └── src/
     ├── __init__.py
-    ├── evaluate.py         # Script for evaluating the model
+    ├── evaluation.py       # Script for evaluating the model
     ├── train.py            # Script for training the model
     └── translate.py        # Script for translating text
 ```
+
+## Future Improvements
+
+-   **Support for more languages:** The project can be extended to support more languages by adding more parallel data and fine-tuning the model on it.
+-   **Improved Model:** The model can be improved by using a larger version of the NLLB model or by fine-tuning it on a larger and cleaner dataset.
+-   **Advanced Frontend:** The frontend can be improved by adding features like translation history, user accounts, and more advanced styling.
+-   **Containerization:** The application can be containerized using Docker for easier deployment and scaling.
