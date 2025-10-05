@@ -8,3 +8,6 @@ accelerate
 sacrebleu
 evaluate
 fastapi[all]
+langdetect
+httpx
+protobuf
